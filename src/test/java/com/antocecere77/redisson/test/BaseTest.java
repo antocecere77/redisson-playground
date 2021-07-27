@@ -9,7 +9,7 @@ import org.redisson.api.RedissonReactiveClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseTest {
 
-    private RedissonConfig redissonConfig;
+    private RedissonConfig redissonConfig = new RedissonConfig();
     protected RedissonReactiveClient client;
 
     @BeforeAll
