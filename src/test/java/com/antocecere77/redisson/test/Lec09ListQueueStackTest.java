@@ -1,7 +1,9 @@
 package com.antocecere77.redisson.test;
 
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RDequeReactive;
 import org.redisson.api.RListReactive;
+import org.redisson.api.RQueueReactive;
 import org.redisson.client.codec.LongCodec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,6 +29,42 @@ public class Lec09ListQueueStackTest extends BaseTest {
 
         StepVerifier.create(list.size())
                 .expectNext(10)
+                .verifyComplete();
+    }
+
+    @Test
+    public void queueTest() {
+        //lrange number-input 0 -1
+        RQueueReactive<Long> queue = this.client.getQueue("number-input", LongCodec.INSTANCE);
+
+        Mono<Void> queuePoll = queue.poll()  // 1, 2...
+                .repeat(3)
+                .doOnNext(System.out::println)
+                .then();
+
+        StepVerifier.create(queuePoll)
+                .verifyComplete();
+
+        StepVerifier.create(queue.size())
+                .expectNext(6)
+                .verifyComplete();
+    }
+
+    @Test
+    public void stackTest() {
+        //lrange number-input 0 -1
+        RDequeReactive<Long> deque = this.client.getDeque("number-input", LongCodec.INSTANCE);
+
+        Mono<Void> stackPoll = deque.pollLast()
+                .repeat(3)
+                .doOnNext(System.out::println)
+                .then();
+
+        StepVerifier.create(stackPoll)
+                .verifyComplete();
+
+        StepVerifier.create(deque.size())
+                .expectNext(2)
                 .verifyComplete();
     }
 }
