@@ -22,12 +22,14 @@ public class Lec12PubSubTest extends BaseTest {
 
     @Test
     public void subscribe2() {
-        RTopicReactive topic = this.client.getTopic("slack-room", StringCodec.INSTANCE);
+        RPatternTopicReactive patternTopic = this.client.getPatternTopic("slack-room*", StringCodec.INSTANCE);
 
-        topic.getMessages(String.class)
-                .doOnError(System.out::println)
-                .doOnNext(System.out::println)
-                .subscribe();
+        patternTopic.addListener(String.class, new PatternMessageListener<String>() {
+            @Override
+            public void onMessage(CharSequence pattern, CharSequence topic, String msg) {
+                System.out.println(pattern + " : " + topic + " : " + msg);
+            }
+        }).subscribe();
 
         sleep(600000);
     }
